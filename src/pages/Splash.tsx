@@ -308,7 +308,7 @@ export default function Splash() {
               <motion.img 
                 src="https://i.postimg.cc/tTngPGq6/Chat-GPT-Image-8-de-jun-de-2026-15-18-21.png" 
                 alt="JP Calçados Logo" 
-                className="w-40 sm:w-48 h-auto object-contain mx-auto drop-shadow-[0_20px_50px_rgba(245,158,11,0.25)] transition-all group-hover:scale-103 group-hover:rotate-1 duration-500"
+                className="w-56 sm:w-72 h-auto object-contain mx-auto drop-shadow-[0_25px_60px_rgba(245,158,11,0.35)] transition-all group-hover:scale-105 group-hover:rotate-1 duration-500"
                 referrerPolicy="no-referrer"
               />
 
@@ -329,33 +329,12 @@ export default function Splash() {
             </div>
           </div>
 
-          {/* Luxury display editorial headlines */}
-          <div className="space-y-4 relative" style={{ transform: 'translateZ(30px)' }}>
-            <motion.h2
-              initial={{ opacity: 0, letterSpacing: "0.2em" }}
-              animate={{ opacity: 1, letterSpacing: "0.45em" }}
-              transition={{ delay: 0.4, duration: 1.2 }}
-              className="font-serif italic text-3xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-b from-amber-100 via-amber-200 to-amber-100 font-bold uppercase pl-[0.45em] drop-shadow-[0_2px_4px_rgba(2,6,23,0.3)]"
-            >
-              JP Calçados
-            </motion.h2>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.8 }}
-              transition={{ delay: 0.8 }}
-              className="text-[9px] uppercase font-black text-amber-405 tracking-[0.3em] pl-[0.3em] flex items-center justify-center gap-1.5"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" /> ALTA MODA • CONFORTO • ATACADO DIRETO
-            </motion.div>
-          </div>
-
           {/* Entering Button Trigger with Gold Reflection Glow */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1, duration: 0.9 }}
-            className="pt-2"
+            transition={{ delay: 0.6, duration: 0.9 }}
+            className="pt-4"
             style={{ transform: 'translateZ(25px)' }}
           >
             <button

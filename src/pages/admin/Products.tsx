@@ -45,11 +45,27 @@ export default function Products() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Clean up images array: trim whitespace and filter out empty strings
+    const cleanedImages = (formData.images || [])
+      .map(img => img.trim())
+      .filter(Boolean);
+    
+    // If all are empty, fall back to a default sample placeholder
+    const finalImages = cleanedImages.length > 0 
+      ? cleanedImages 
+      : ['https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80'];
+
+    const submissionData = {
+      ...formData,
+      images: finalImages
+    };
+
     if (editingId) {
-      updateProduct(editingId, formData as Partial<Product>);
+      updateProduct(editingId, submissionData as Partial<Product>);
     } else {
       addProduct({
-        ...formData,
+        ...submissionData,
         id: Math.random().toString(36).substring(2, 9),
         createdAt: Date.now()
       } as Product);
@@ -236,15 +252,75 @@ export default function Products() {
               </div>
 
               {/* URL Images */}
-              <div className="md:col-span-2">
-                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Link de Imagem Principal</label>
-                <input 
-                  required 
-                  type="url" 
-                  value={formData.images?.[0] || ''} 
-                  onChange={e => setFormData({...formData, images: [e.target.value]})} 
-                  className="w-full bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white text-sm p-3.5 rounded-xl outline-none font-mono transition-all" 
-                />
+              <div className="md:col-span-2 bg-slate-50/60 p-4 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 uppercase tracking-widest leading-none">Fotos do Calçado (Múltiplas Imagens)</label>
+                    <p className="text-[10px] text-slate-400 mt-1">Insira um ou mais links públicos de imagens (as fotos aparecerão na página de detalhes).</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const currentImages = [...(formData.images || [])];
+                      setFormData({ ...formData, images: [...currentImages, ''] });
+                    }}
+                    className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-indigo-600 hover:text-indigo-800 border border-indigo-200 hover:border-indigo-300 px-2.5 py-1.5 rounded-lg transition-all bg-indigo-50 hover:bg-indigo-100/50 cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" /> Adicionar Foto
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3">
+                  {(formData.images || ['']).map((imgUrl, index) => (
+                    <div key={index} className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center bg-white p-3 rounded-xl border border-slate-200">
+                      
+                      {/* Thumbnail Preview */}
+                      <div className="w-14 h-14 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden shrink-0 border border-slate-200 relative">
+                        {imgUrl ? (
+                          <img 
+                            src={imgUrl} 
+                            alt={`Preview ${index + 1}`} 
+                            className="w-full h-full object-cover" 
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                        ) : null}
+                        <span className="absolute bottom-0 inset-x-0 bg-slate-900/70 text-[8px] text-slate-200 text-center font-bold py-0.5">
+                          Foto {index + 1}
+                        </span>
+                      </div>
+
+                      <div className="flex-1 flex gap-2">
+                        <input 
+                          required={index === 0} 
+                          type="url" 
+                          placeholder={index === 0 ? "https://exemplo.com/foto-principal.jpg (Obrigatória)" : "https://exemplo.com/foto-adicional.jpg (Opcional)"}
+                          value={imgUrl} 
+                          onChange={e => {
+                            const newImages = [...(formData.images || [''])];
+                            newImages[index] = e.target.value;
+                            setFormData({ ...formData, images: newImages });
+                          }} 
+                          className="flex-1 bg-slate-50 border border-slate-200 focus:border-indigo-500 text-xs p-2.5 rounded-lg outline-none font-mono transition-all" 
+                        />
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newImages = (formData.images || []).filter((_, i) => i !== index);
+                              setFormData({ ...formData, images: newImages.length > 0 ? newImages : [''] });
+                            }}
+                            className="p-2 text-rose-500 hover:text-rose-750 hover:bg-rose-50 border border-rose-100 rounded-lg transition-all shrink-0 cursor-pointer"
+                            title="Remover Imagem"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Sizes list separated by commas */}
