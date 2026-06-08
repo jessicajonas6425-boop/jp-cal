@@ -32,7 +32,7 @@ export default function Products() {
       brand: '',
       price: 0, 
       wholesalePrice: 0,
-      promotionalPrice: undefined, 
+      promotionalPrice: null, 
       stock: 10, 
       weight: 0.8, 
       sizes: ['34', '35', '36', '37', '38', '39', '40', '41', '42'], 
@@ -58,10 +58,20 @@ export default function Products() {
 
     const defaultSku = formData.sku || 'REF-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
+    // Ensure all numeric and boolean fields are clean and valid
     const submissionData = {
       ...formData,
       sku: defaultSku,
-      images: finalImages
+      images: finalImages,
+      price: Number(formData.price) || 0,
+      wholesalePrice: Number(formData.wholesalePrice) || 0,
+      promotionalPrice: formData.promotionalPrice ? (Number(formData.promotionalPrice) || null) : null,
+      stock: Number(formData.stock) !== undefined ? (Number(formData.stock) || 0) : 10,
+      weight: Number(formData.weight) !== undefined ? (Number(formData.weight) || 0.8) : 0.8,
+      category: formData.category || categories[0]?.name || '',
+      subcategory: formData.subcategory || '',
+      description: formData.description || '',
+      active: formData.active !== false
     };
 
     if (editingId) {
@@ -154,10 +164,12 @@ export default function Products() {
               <div>
                 <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Categoria Principal</label>
                 <select 
+                  required
                   value={formData.category || ''} 
                   onChange={e => setFormData({...formData, category: e.target.value})} 
                   className="w-full bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white text-sm p-3.5 rounded-xl outline-none bg-white transition-all font-bold"
                 >
+                  <option value="" disabled>Selecione uma Categoria</option>
                   {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                 </select>
               </div>
@@ -234,7 +246,7 @@ export default function Products() {
                     type="number" 
                     step="0.01" 
                     value={formData.promotionalPrice || ''} 
-                    onChange={e => setFormData({...formData, promotionalPrice: e.target.value ? parseFloat(e.target.value) : undefined})} 
+                    onChange={e => setFormData({...formData, promotionalPrice: e.target.value ? parseFloat(e.target.value) : null})} 
                     placeholder="Deixa em branco se não houver"
                     className="w-full bg-white border-2 border-slate-200 focus:border-indigo-500 text-sm p-3.5 rounded-xl outline-none transition-all font-extrabold" 
                   />

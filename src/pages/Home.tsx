@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { formatCurrency } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -20,6 +20,8 @@ export default function Home() {
   const { products, categories, settings } = useStore();
   const { slug } = useParams<{ slug?: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const isPromotionsPage = location.pathname === '/promocoes';
   const subCategoryQuery = searchParams.get('sub') || '';
 
   const parsedTitle = useMemo(() => {
@@ -74,7 +76,11 @@ export default function Home() {
   const filteredProducts = useMemo(() => {
     return products
       .filter(p => {
-        if (!p.active) return false;
+        // Safe check for active status (defaults to true if missing or undefined)
+        if (p.active === false) return false;
+        
+        // Outlet / promotions page filter
+        if (isPromotionsPage && !p.promotionalPrice) return false;
         
         // Search filter
         const matchesSearch = 
@@ -110,7 +116,7 @@ export default function Home() {
         if (sortBy === 'expensive') return pB - pA;
         return b.createdAt - a.createdAt; // Default/Latest
       });
-  }, [products, searchTerm, selectedCategory, subCategoryQuery, selectedSize, maxPrice, sortBy]);
+  }, [products, searchTerm, selectedCategory, subCategoryQuery, selectedSize, maxPrice, sortBy, isPromotionsPage]);
 
   return (
     <div className="flex flex-col gap-20 pb-28 bg-slate-50/50">

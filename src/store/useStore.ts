@@ -3,6 +3,24 @@ import { collection, onSnapshot, doc, setDoc, updateDoc, deleteDoc } from 'fireb
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import type { Product, Category, CartItem, Order, Settings, Coupon } from '../types';
 
+function cleanFirestoreData(data: any): any {
+  if (data === undefined) return null;
+  if (data === null) return null;
+  if (Array.isArray(data)) {
+    return data.map(item => cleanFirestoreData(item));
+  }
+  if (typeof data === 'object') {
+    if (data instanceof Date) return data;
+    const cleaned: any = {};
+    for (const key of Object.keys(data)) {
+      const val = data[key];
+      cleaned[key] = cleanFirestoreData(val);
+    }
+    return cleaned;
+  }
+  return data;
+}
+
 interface StoreState {
   // Splash
   hasSeenSplash: boolean;
@@ -179,7 +197,7 @@ export const useStore = create<StoreState>((set, get) => ({
       if (productsList.length === 0) {
         initialProducts.forEach(async (p) => {
           try {
-            await setDoc(doc(db, 'products', p.id), p);
+            await setDoc(doc(db, 'products', p.id), cleanFirestoreData(p));
           } catch (err) {
             console.error('Erro ao semear produto:', err);
           }
@@ -202,7 +220,7 @@ export const useStore = create<StoreState>((set, get) => ({
       if (categoriesList.length === 0) {
         initialCategories.forEach(async (c) => {
           try {
-            await setDoc(doc(db, 'categories', c.id), c);
+            await setDoc(doc(db, 'categories', c.id), cleanFirestoreData(c));
           } catch (err) {
             console.error('Erro ao semear categoria:', err);
           }
@@ -241,7 +259,7 @@ export const useStore = create<StoreState>((set, get) => ({
             instagram: '@jp_distribuidora_ns', 
             address: '📍 Nova Serrana – MG' 
           };
-          setDoc(doc(db, 'settings', 'general'), upgraded).catch((err) => {
+          setDoc(doc(db, 'settings', 'general'), cleanFirestoreData(upgraded)).catch((err) => {
             console.error('Erro ao atualizar configurações para novos dados:', err);
           });
           set({ settings: upgraded });
@@ -250,7 +268,7 @@ export const useStore = create<StoreState>((set, get) => ({
         }
       } else {
         // Seed default parameters
-        setDoc(doc(db, 'settings', 'general'), defaultSettings).catch((err) => {
+        setDoc(doc(db, 'settings', 'general'), cleanFirestoreData(defaultSettings)).catch((err) => {
           console.error('Erro ao semear configurações:', err);
         });
       }
@@ -280,14 +298,14 @@ export const useStore = create<StoreState>((set, get) => ({
 
   addProduct: async (p) => {
     try {
-      await setDoc(doc(db, 'products', p.id), p);
+      await setDoc(doc(db, 'products', p.id), cleanFirestoreData(p));
     } catch (err) {
       handleFirestoreError(err, OperationType.CREATE, `products/${p.id}`);
     }
   },
   updateProduct: async (id, p) => {
     try {
-      await updateDoc(doc(db, 'products', id), p);
+      await updateDoc(doc(db, 'products', id), cleanFirestoreData(p));
     } catch (err) {
       handleFirestoreError(err, OperationType.UPDATE, `products/${id}`);
     }
@@ -302,14 +320,14 @@ export const useStore = create<StoreState>((set, get) => ({
 
   addCategory: async (c) => {
     try {
-      await setDoc(doc(db, 'categories', c.id), c);
+      await setDoc(doc(db, 'categories', c.id), cleanFirestoreData(c));
     } catch (err) {
       handleFirestoreError(err, OperationType.CREATE, `categories/${c.id}`);
     }
   },
   updateCategory: async (id, c) => {
     try {
-      await updateDoc(doc(db, 'categories', id), c);
+      await updateDoc(doc(db, 'categories', id), cleanFirestoreData(c));
     } catch (err) {
       handleFirestoreError(err, OperationType.UPDATE, `categories/${id}`);
     }
@@ -324,14 +342,14 @@ export const useStore = create<StoreState>((set, get) => ({
 
   addCoupon: async (coupon) => {
     try {
-      await setDoc(doc(db, 'coupons', coupon.id), coupon);
+      await setDoc(doc(db, 'coupons', coupon.id), cleanFirestoreData(coupon));
     } catch (err) {
       handleFirestoreError(err, OperationType.CREATE, `coupons/${coupon.id}`);
     }
   },
   updateCoupon: async (id, coupon) => {
     try {
-      await updateDoc(doc(db, 'coupons', id), coupon);
+      await updateDoc(doc(db, 'coupons', id), cleanFirestoreData(coupon));
     } catch (err) {
       handleFirestoreError(err, OperationType.UPDATE, `coupons/${id}`);
     }
@@ -346,13 +364,13 @@ export const useStore = create<StoreState>((set, get) => ({
 
   addOrder: async (o) => {
     try {
-      await setDoc(doc(db, 'orders', o.id), o);
+      await setDoc(doc(db, 'orders', o.id), cleanFirestoreData(o));
       // Automatically decrease stock on other synced clients
       for (const item of o.items) {
         const prod = get().products.find(p => p.id === item.id);
         if (prod) {
           const newStock = Math.max(0, prod.stock - item.quantity);
-          await updateDoc(doc(db, 'products', item.id), { stock: newStock });
+          await updateDoc(doc(db, 'products', item.id), cleanFirestoreData({ stock: newStock }));
         }
       }
     } catch (err) {
@@ -364,21 +382,21 @@ export const useStore = create<StoreState>((set, get) => ({
       const oldOrder = get().orders.find(ord => ord.id === id);
       if (!oldOrder) return;
 
-      await updateDoc(doc(db, 'orders', id), { status });
+      await updateDoc(doc(db, 'orders', id), cleanFirestoreData({ status }));
       
       // Stock adjustment depending on status
       if (status === 'Cancelado' && oldOrder.status !== 'Cancelado') {
         for (const item of oldOrder.items) {
           const prod = get().products.find(p => p.id === item.id);
           if (prod) {
-            await updateDoc(doc(db, 'products', item.id), { stock: prod.stock + item.quantity });
+            await updateDoc(doc(db, 'products', item.id), cleanFirestoreData({ stock: prod.stock + item.quantity }));
           }
         }
       } else if (oldOrder.status === 'Cancelado' && status !== 'Cancelado') {
         for (const item of oldOrder.items) {
           const prod = get().products.find(p => p.id === item.id);
           if (prod) {
-            await updateDoc(doc(db, 'products', item.id), { stock: Math.max(0, prod.stock - item.quantity) });
+            await updateDoc(doc(db, 'products', item.id), cleanFirestoreData({ stock: Math.max(0, prod.stock - item.quantity) }));
           }
         }
       }
@@ -389,7 +407,7 @@ export const useStore = create<StoreState>((set, get) => ({
 
   updateSettings: async (s) => {
     try {
-      await setDoc(doc(db, 'settings', 'general'), { ...get().settings, ...s });
+      await setDoc(doc(db, 'settings', 'general'), cleanFirestoreData({ ...get().settings, ...s }));
     } catch (err) {
       handleFirestoreError(err, OperationType.UPDATE, 'settings/general');
     }
