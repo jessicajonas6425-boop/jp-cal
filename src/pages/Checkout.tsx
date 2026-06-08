@@ -5,6 +5,77 @@ import { formatCurrency } from '../lib/utils';
 import { ArrowLeft, Clock, ShoppingCart, Truck, CreditCard, Tag, X } from 'lucide-react';
 import type { CheckoutForm, Order, Coupon } from '../types';
 
+interface ShippingRates {
+  pac: number;
+  sedex: number;
+  pacTime: string;
+  sedexTime: string;
+}
+
+export const calculateShippingFromNovaSerrana = (state: string, city: string, cep: string): ShippingRates => {
+  const cleanState = (state || '').trim().toUpperCase();
+  const cleanCity = (city || '').trim().toLowerCase();
+  const cleanCep = (cep || '').replace(/\D/g, '');
+  
+  // Same City (Nova Serrana, MG)
+  if (cleanCity === 'nova serrana' || (cleanState === 'MG' && cleanCep.startsWith('35520'))) {
+    return {
+      pac: 0.00, // Grátis / Retirada local
+      sedex: 8.90,
+      pacTime: 'Retirada ou entrega local (Grátis)',
+      sedexTime: 'Mesmo dia útil'
+    };
+  }
+  
+  // Minas Gerais (MG)
+  if (cleanState === 'MG') {
+    return {
+      pac: 12.90,
+      sedex: 19.90,
+      pacTime: 'Entrega: 2 a 4 dias úteis',
+      sedexTime: 'Entrega: 1 a 2 dias úteis'
+    };
+  }
+  
+  // Bordering/Southeast states (SP, RJ, ES)
+  if (['SP', 'RJ', 'ES'].includes(cleanState)) {
+    return {
+      pac: 18.90,
+      sedex: 29.90,
+      pacTime: 'Entrega: 4 a 6 dias úteis',
+      sedexTime: 'Entrega: 2 a 3 dias úteis'
+    };
+  }
+  
+  // Sul e Centro-Oeste (PR, SC, RS, DF, GO, MS, MT)
+  if (['PR', 'SC', 'RS', 'DF', 'GO', 'MS', 'MT'].includes(cleanState)) {
+    return {
+      pac: 24.90,
+      sedex: 39.90,
+      pacTime: 'Entrega: 5 a 8 dias úteis',
+      sedexTime: 'Entrega: 3 a 4 dias úteis'
+    };
+  }
+  
+  // Nordeste (BA, PE, CE, RN, PB, AL, SE, MA, PI)
+  if (['BA', 'PE', 'CE', 'RN', 'PB', 'AL', 'SE', 'MA', 'PI'].includes(cleanState)) {
+    return {
+      pac: 29.90,
+      sedex: 49.90,
+      pacTime: 'Entrega: 6 a 10 dias úteis',
+      sedexTime: 'Entrega: 4 a 5 dias úteis'
+    };
+  }
+  
+  // Norte e outros estados (AM, PA, RO, AC, TO, AP, RR)
+  return {
+    pac: 34.90,
+    sedex: 59.90,
+    pacTime: 'Entrega: 8 a 13 dias úteis',
+    sedexTime: 'Entrega: 5 a 7 dias úteis'
+  };
+};
+
 export default function Checkout() {
   const { cart, settings, coupons, addOrder, clearCart } = useStore();
   const navigate = useNavigate();
@@ -92,6 +163,10 @@ export default function Checkout() {
     return Math.max(0, subtotal + form.shippingCost - discountAmount);
   }, [subtotal, form.shippingCost, discountAmount]);
 
+  const computedRates = useMemo(() => {
+    return calculateShippingFromNovaSerrana(form.state, form.city, form.cep);
+  }, [form.state, form.city, form.cep]);
+
   if (cart.length === 0) {
     navigate('/carrinho');
     return null;
@@ -107,15 +182,20 @@ export default function Checkout() {
         const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const data = await res.json();
         if (!data.erro) {
-          setForm(prev => ({
-            ...prev,
-            street: data.logradouro || '',
-            neighborhood: data.bairro || '',
-            city: data.localidade || '',
-            state: data.uf || '',
-            // Simulate postal delivery rates based on distance/state
-            shippingCost: data.uf === 'SP' ? 14.90 : 29.90
-          }));
+          setForm(prev => {
+            const state = data.uf || '';
+            const city = data.localidade || '';
+            const rates = calculateShippingFromNovaSerrana(state, city, cep);
+            const shippingCost = prev.shippingOption === 'SEDEX' ? rates.sedex : rates.pac;
+            return {
+              ...prev,
+              street: data.logradouro || '',
+              neighborhood: data.bairro || '',
+              city,
+              state,
+              shippingCost
+            };
+          });
         }
       } catch (err) {
         console.error('Error fetching CEP:', err);
@@ -127,12 +207,12 @@ export default function Checkout() {
 
   const handleShippingChange = (option: 'PAC' | 'SEDEX') => {
     setForm(prev => {
-      const baseCost = prev.state === 'SP' ? 14.90 : 29.90;
-      const newCost = option === 'SEDEX' ? baseCost + 15.00 : baseCost;
+      const rates = calculateShippingFromNovaSerrana(prev.state, prev.city, prev.cep);
+      const shippingCost = option === 'SEDEX' ? rates.sedex : rates.pac;
       return {
         ...prev,
         shippingOption: option,
-        shippingCost: newCost
+        shippingCost
       };
     });
   };
@@ -284,6 +364,17 @@ ${appliedCoupon ? `• Cupom Desconto (${appliedCoupon.id}): -${formatCurrency(d
             <h2 className="text-sm font-black uppercase text-slate-850 tracking-widest border-b border-slate-100 pb-4 mb-6">
               2. Endereço de Despacho
             </h2>
+
+            <div className="mb-6 p-4 bg-indigo-50/40 border border-indigo-100 rounded-xl flex gap-3.5 items-start text-xs text-slate-700">
+              <Truck className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-extrabold uppercase tracking-wider text-[10px] text-indigo-900">Expedição Direta do Centro de Distribuição:</p>
+                <p className="mt-1 font-semibold leading-relaxed">
+                  Rua Pará de Minas, 286, Apt 102, Centro - Nova Serrana, MG (CEP: 35520-090).
+                </p>
+                <p className="mt-1 text-slate-500 font-medium">O cálculo de entrega e frete do pedido é gerado com base nesta localização.</p>
+              </div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-6 gap-5">
               <div className="md:col-span-2">
@@ -381,10 +472,10 @@ ${appliedCoupon ? `• Cupom Desconto (${appliedCoupon.id}): -${formatCurrency(d
           </section>
 
           {/* Delivery choices */}
-          {form.shippingCost > 0 && (
+          {form.shippingCost >= 0 && form.cep.length === 8 && (
             <section className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-xs">
               <h2 className="text-sm font-black uppercase text-slate-850 tracking-widest border-b border-slate-100 pb-4 mb-6">
-                3. Agendamento de Entrega
+                3. Opções de Frete (Simulado de Nova Serrana/MG)
               </h2>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -404,11 +495,13 @@ ${appliedCoupon ? `• Cupom Desconto (${appliedCoupon.id}): -${formatCurrency(d
                       className="w-4 h-4 text-indigo-600 focus:ring-indigo-550" 
                     />
                     <div>
-                      <p className="font-extrabold uppercase text-xs text-slate-800">PAC - Econômico</p>
-                      <p className="text-[10px] text-slate-450 font-medium">Prazo estimado: 5 a 10 dias</p>
+                      <p className="font-extrabold uppercase text-xs text-slate-800">PAC - Barato</p>
+                      <p className="text-[10px] text-slate-450 font-medium">{computedRates.pacTime}</p>
                     </div>
                   </div>
-                  <span className="font-black text-sm text-slate-800">{formatCurrency(form.state === 'SP' ? 14.90 : 29.90)}</span>
+                  <span className="font-black text-sm text-slate-800">
+                    {computedRates.pac === 0 ? 'Grátis' : formatCurrency(computedRates.pac)}
+                  </span>
                 </label>
                 
                 <label 
@@ -427,11 +520,11 @@ ${appliedCoupon ? `• Cupom Desconto (${appliedCoupon.id}): -${formatCurrency(d
                       className="w-4 h-4 text-indigo-600 focus:ring-indigo-550" 
                     />
                     <div>
-                      <p className="font-extrabold uppercase text-xs text-slate-800">SEDEX - Expresso</p>
-                      <p className="text-[10px] text-slate-450 font-medium">Prazo estimado: 1 a 3 dias</p>
+                      <p className="font-extrabold uppercase text-xs text-slate-800">SEDEX - Rápido</p>
+                      <p className="text-[10px] text-slate-450 font-medium">{computedRates.sedexTime}</p>
                     </div>
                   </div>
-                  <span className="font-black text-sm text-slate-800">{formatCurrency((form.state === 'SP' ? 14.90 : 29.90) + 15.00)}</span>
+                  <span className="font-black text-sm text-slate-800">{formatCurrency(computedRates.sedex)}</span>
                 </label>
               </div>
             </section>
@@ -529,7 +622,9 @@ ${appliedCoupon ? `• Cupom Desconto (${appliedCoupon.id}): -${formatCurrency(d
               </div>
               <div className="flex justify-between items-center">
                 <span>Taxa de Frete ({form.shippingOption})</span>
-                <span className="text-white font-extrabold">{form.shippingCost ? formatCurrency(form.shippingCost) : 'Informar CEP'}</span>
+                <span className="text-white font-extrabold">
+                  {form.cep.length === 8 ? (form.shippingCost === 0 ? 'Grátis' : formatCurrency(form.shippingCost)) : 'Informar CEP'}
+                </span>
               </div>
               {appliedCoupon && (
                 <div className="flex justify-between items-center text-emerald-400 font-extrabold">

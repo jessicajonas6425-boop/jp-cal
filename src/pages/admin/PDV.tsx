@@ -59,12 +59,12 @@ export default function PDV() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)] relative">
+    <div className="flex flex-col h-auto lg:h-[calc(100vh-6rem)] relative">
       <h1 className="text-3xl font-black uppercase tracking-tight text-slate-900 mb-6 print:hidden">Ponto de Venda (PDV)</h1>
       
-      <div className="print:hidden flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 overflow-hidden">
+      <div className="print:hidden flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 overflow-y-auto lg:overflow-hidden pb-10 lg:pb-0">
         {/* Produto Selection (Esquerda) */}
-        <div className="lg:col-span-8 flex flex-col bg-white border border-slate-200">
+        <div className="lg:col-span-8 flex flex-col bg-white border border-slate-200 h-[450px] lg:h-auto">
           <div className="p-4 border-b border-slate-200 bg-slate-50 relative">
             <Search className="absolute left-7 top-7 w-5 h-5 text-slate-400" />
             <input 
@@ -98,7 +98,7 @@ export default function PDV() {
         </div>
 
         {/* Carrinho PDV (Direita) */}
-        <div className="lg:col-span-4 flex flex-col bg-slate-900 text-white shadow-xl">
+        <div className="lg:col-span-4 flex flex-col bg-slate-900 text-white shadow-xl h-[500px] lg:h-auto">
            <div className="p-4 border-b border-slate-700 bg-slate-800 flex justify-between items-center">
              <h2 className="text-lg font-bold uppercase tracking-widest text-slate-100">Caixa Aberto</h2>
              <span className="text-xs bg-green-500 text-white px-2 py-1 rounded font-bold uppercase">Online</span>

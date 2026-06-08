@@ -60,11 +60,11 @@ export default function UserLayout() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xl sm:text-2xl font-serif italic font-bold tracking-wide text-slate-950 leading-none group-hover:bg-gradient-to-r group-hover:from-amber-600 group-hover:to-indigo-600 group-hover:bg-clip-text group-hover:text-transparent transition-all">
+                  <span className="text-xl sm:text-2xl font-sans font-extrabold tracking-tight text-slate-950 leading-none group-hover:text-amber-600 transition-all">
                     JP Calçados
                   </span>
-                  <span className="text-[8.5px] uppercase font-black text-slate-450 tracking-[0.3em] mt-1 pl-0.5">
-                    DIRETORIO DE ATACADO DE REVENDA
+                  <span className="text-[9px] uppercase font-bold text-slate-500 tracking-[0.25em] mt-1 pl-0.5">
+                    Varejo | Atacado
                   </span>
                 </div>
               </Link>

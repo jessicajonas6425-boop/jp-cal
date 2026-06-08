@@ -161,8 +161,8 @@ export default function Dashboard() {
       </div>
 
       {/* WHATSAPP SPECIFICATION SPLITS (Wholesale vs Retail Orders count) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-900 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-lg">
-        <div className="absolute inset-0 bg-radial-gradient/10 pointer-events-none" />
+      <div className="flex flex-col md:grid md:grid-cols-2 gap-6 bg-slate-900 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-lg">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none" />
         
         <div className="space-y-4">
           <span className="text-[9px] bg-indigo-500/10 border border-indigo-400/20 text-indigo-300 font-black tracking-widest uppercase px-3 py-1 rounded-full">
@@ -174,7 +174,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-4 bg-slate-800 border border-slate-700/60 rounded-2xl space-y-2">
             <div className="flex items-center gap-1.5 text-xs text-indigo-400 font-bold uppercase tracking-wider">
               <Layers className="w-4 h-4" /> Atacado ({stats.wholesaleOrdersCount})
@@ -184,7 +184,7 @@ export default function Dashboard() {
           </div>
 
           <div className="p-4 bg-slate-800 border border-slate-700/60 rounded-2xl space-y-2">
-            <div className="flex items-center gap-1.5 text-xs text-rose-450 font-bold uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 text-xs text-rose-455 font-bold uppercase tracking-wider">
               <Tag className="w-4 h-4" /> Varejo ({stats.retailOrdersCount})
             </div>
             <p className="text-2xl font-black">{stats.retailOrdersCount} pares</p>
