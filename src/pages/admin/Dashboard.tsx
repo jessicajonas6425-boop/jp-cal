@@ -212,7 +212,7 @@ export default function Dashboard() {
                 <img src={p.image} alt="" className="w-11 h-11 rounded-lg object-cover border border-slate-200 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="font-extrabold text-sm text-slate-800 truncate uppercase leading-none">{p.name}</p>
-                  <p className="text-[10px] text-slate-450 font-mono mt-1">SKU: {p.sku} | {p.brand}</p>
+                  <p className="text-[10px] text-slate-450 font-bold mt-1 uppercase tracking-wider">{p.brand}</p>
                 </div>
                 <div className="text-right">
                   <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-100 font-extrabold px-2.5 py-1 rounded-full">
@@ -244,7 +244,7 @@ export default function Dashboard() {
                 <img src={p.image} alt="" className="w-11 h-11 rounded-lg object-cover border border-slate-200 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="font-extrabold text-sm text-slate-800 truncate uppercase leading-none">{p.name}</p>
-                  <p className="text-[10px] text-slate-450 font-mono mt-1">SKU: {p.sku} | {p.brand}</p>
+                  <p className="text-[10px] text-slate-450 font-bold mt-1 uppercase tracking-wider">{p.brand}</p>
                 </div>
                 <div className="text-right">
                   <span className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 font-extrabold px-2.5 py-1 rounded-full">
@@ -322,7 +322,7 @@ export default function Dashboard() {
                 <img src={p.images[0]} alt="" className="w-10 h-10 rounded-lg object-cover border border-slate-200 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="font-extrabold text-sm text-slate-800 truncate uppercase leading-none">{p.name}</p>
-                  <p className="text-[10px] text-slate-450 font-mono mt-1">SKU: {p.sku}</p>
+                  <p className="text-[10px] text-slate-450 font-bold mt-1 uppercase tracking-wider">{p.brand}</p>
                 </div>
                 <div className="text-right">
                   <span className={`text-xs font-black px-3 py-1 rounded-full ${

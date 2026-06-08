@@ -70,6 +70,9 @@ export interface Settings {
   address: string;
   businessHours: string;
   wholesaleMinQty: number; // Quantidade mínima para atacado
+  heroBgUrl?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
 }
 
 export interface Coupon {

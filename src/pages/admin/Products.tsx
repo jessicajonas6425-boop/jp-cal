@@ -56,8 +56,11 @@ export default function Products() {
       ? cleanedImages 
       : ['https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80'];
 
+    const defaultSku = formData.sku || 'REF-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
     const submissionData = {
       ...formData,
+      sku: defaultSku,
       images: finalImages
     };
 
@@ -131,19 +134,6 @@ export default function Products() {
                   onChange={e => setFormData({...formData, description: e.target.value})} 
                   placeholder="Características, modelo do cabedal, amortecimento, etc."
                   className="w-full bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white text-sm p-3.5 rounded-xl outline-none transition-all" 
-                />
-              </div>
-
-              {/* SKU */}
-              <div>
-                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-1">SKU (Código de Referência)</label>
-                <input 
-                  required 
-                  type="text" 
-                  value={formData.sku || ''} 
-                  onChange={e => setFormData({...formData, sku: e.target.value})} 
-                  placeholder="TEN-RUN-01"
-                  className="w-full bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white text-sm p-3.5 rounded-xl outline-none transition-all font-mono" 
                 />
               </div>
 
@@ -396,8 +386,8 @@ export default function Products() {
                         <div className="font-bold text-slate-800 uppercase tracking-tight max-w-[240px] truncate">
                           {p.name}
                         </div>
-                        <div className="text-[10px] font-mono text-slate-500 mt-0.5">
-                          SKU: {p.sku} | <span className="font-bold uppercase text-slate-400">{p.category}</span> {p.subcategory && `> ${p.subcategory}`}
+                        <div className="text-[10px] font-bold text-slate-500 mt-0.5 uppercase tracking-wide">
+                          Categoria: <span className="text-slate-400">{p.category}</span> {p.subcategory && `> ${p.subcategory}`}
                         </div>
                       </td>
                       <td className="p-4 font-extrabold text-slate-800">

@@ -14,7 +14,7 @@ export default function PDV() {
 
   const filteredProducts = products.filter(p => 
     p.active && 
-    (p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.sku.toLowerCase().includes(searchTerm.toLowerCase()))
+    (p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.brand.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const subtotal = cart.reduce((acc, item) => acc + ((item.promotionalPrice || item.price) * item.quantity), 0);
@@ -69,7 +69,7 @@ export default function PDV() {
             <Search className="absolute left-7 top-7 w-5 h-5 text-slate-400" />
             <input 
               type="text" 
-              placeholder="Buscar por código de barras (SKU) ou Nome..."
+              placeholder="Buscar por código de referência ou Nome..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-slate-300 focus:outline-none focus:border-indigo-500 rounded-lg text-lg uppercase shadow-sm"
@@ -89,7 +89,7 @@ export default function PDV() {
                    <img src={p.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
                    {p.stock <= 0 && <span className="absolute inset-0 bg-white/60 flex items-center justify-center font-bold text-red-600 uppercase text-xs">Esgotado</span>}
                  </div>
-                 <p className="text-xs text-slate-500 font-bold uppercase tracking-wider truncate">{p.sku}</p>
+                 <p className="text-[10px] text-amber-600 font-black uppercase tracking-wider truncate">{p.brand}</p>
                  <p className="text-sm font-bold text-slate-900 leading-tight line-clamp-2 mt-1">{p.name}</p>
                  <p className="text-sm font-black text-indigo-600 mt-auto">{formatCurrency(p.promotionalPrice || p.price)}</p>
                </button>

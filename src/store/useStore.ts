@@ -54,6 +54,9 @@ const defaultSettings: Settings = {
   address: '📍 Nova Serrana – MG',
   businessHours: 'Seg à Sex: 08:00 - 18:00',
   wholesaleMinQty: 3,
+  heroBgUrl: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=2000&q=80',
+  heroTitle: 'Passo Forte no\nAtacado de Calçados.',
+  heroSubtitle: 'Sua melhor vitrine de revenda profissional. Atacado automático ativo a partir de apenas {wholesaleMinQty} pares em todo o carrinho, misturando marcas e tamanhos livremente!',
 };
 
 // Seed initial products with retail + wholesale values

@@ -148,7 +148,7 @@ export default function Product() {
               {product.name}
             </h1>
             <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-[0.25em] mt-3">
-              REF: <span className="font-mono text-slate-700 font-bold">{product.sku}</span> | CATEGORIA: <span className="text-slate-700 font-bold">{product.category}</span>
+              CATEGORIA: <span className="text-slate-700 font-bold">{product.category}</span>
             </p>
           </div>
           

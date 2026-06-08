@@ -22,6 +22,20 @@ export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
   const subCategoryQuery = searchParams.get('sub') || '';
 
+  const parsedTitle = useMemo(() => {
+    const rawTitle = settings.heroTitle || 'Passo Forte no\nAtacado de Calçados.';
+    const parts = rawTitle.split('\n');
+    return {
+      part1: parts[0] || '',
+      part2: parts.slice(1).join('\n') || ''
+    };
+  }, [settings.heroTitle]);
+
+  const parsedSubtitle = useMemo(() => {
+    const rawSub = settings.heroSubtitle || 'Sua melhor vitrine de revenda profissional. Atacado automático ativo a partir de apenas {wholesaleMinQty} pares em todo o carrinho, misturando marcas e tamanhos livremente!';
+    return rawSub.replace('{wholesaleMinQty}', String(settings.wholesaleMinQty || 3));
+  }, [settings.heroSubtitle, settings.wholesaleMinQty]);
+
   // State for search and filters
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>(slug || 'Todos');
@@ -103,11 +117,11 @@ export default function Home() {
       
       {/* Premium Luxury Hero Banner */}
       <section className="relative h-[72vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-slate-950">
-        <div className="absolute inset-0 opacity-30 mix-blend-multiply">
+        <div className="absolute inset-0 opacity-30 mix-blend-multiply animate-fadeIn">
           <img 
-            src="https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=2000&q=80" 
+            src={settings.heroBgUrl || "https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=2000&q=80"} 
             alt="Cinematic footwear construction" 
-            className="w-full h-full object-cover scale-102"
+            className="w-full h-full object-cover scale-102 transition-all duration-700"
           />
         </div>
         
@@ -132,10 +146,21 @@ export default function Home() {
             transition={{ duration: 1, delay: 0.1, ease: "easeOut" }}
             className="text-4xl sm:text-5xl md:text-7xl font-bold text-white uppercase tracking-tight leading-[0.95] max-w-5xl"
           >
-            <span className="font-serif italic font-light text-slate-100 uppercase tracking-normal">Passo Forte no</span> <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 py-3 font-extrabold">
-              Atacado de Calçados.
-            </span>
+            {parsedTitle.part1 && (
+              <>
+                <span className="font-serif italic font-light text-slate-100 uppercase tracking-normal">{parsedTitle.part1}</span>
+                <br />
+              </>
+            )}
+            {parsedTitle.part2 ? (
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 py-3 font-extrabold whitespace-pre-line">
+                {parsedTitle.part2}
+              </span>
+            ) : (
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 py-3 font-extrabold">
+                Atacado de Calçados.
+              </span>
+            )}
           </motion.h1>
           
           <motion.p 
@@ -144,7 +169,16 @@ export default function Home() {
             transition={{ duration: 1, delay: 0.3 }}
             className="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl font-light tracking-wide leading-relaxed"
           >
-            Sua melhor vitrine de revenda profissional. Atacado automático ativo a partir de apenas <span className="text-amber-300 font-bold">{settings.wholesaleMinQty || 3} pares</span> em todo o carrinho, misturando marcas e tamanhos livremente!
+            {parsedSubtitle.includes(String(settings.wholesaleMinQty)) ? (
+              parsedSubtitle.split(String(settings.wholesaleMinQty)).map((text, index, array) => (
+                <React.Fragment key={index}>
+                  {text}
+                  {index < array.length - 1 && <span className="text-amber-300 font-bold">{settings.wholesaleMinQty} pares</span>}
+                </React.Fragment>
+              ))
+            ) : (
+              parsedSubtitle
+            )}
           </motion.p>
           
           <motion.div
@@ -179,7 +213,7 @@ export default function Home() {
             <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
             <input 
               type="text"
-              placeholder="Pesquise por tênis, marca, SKU, modelo, cano..."
+              placeholder="Pesquise por tênis, marca, modelo, cano..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3.5 bg-slate-50 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-amber-500 text-xs font-medium transition-all"
@@ -380,10 +414,10 @@ const ProductCard: React.FC<{ product: any; wholesaleMinQty: number }> = ({ prod
       </Link>
 
       <div className="p-6 sm:p-7 flex flex-col flex-1">
-        {/* Brand details and model ID SKU */}
+        {/* Brand details and category */}
         <div className="flex items-center justify-between mb-2">
           <span className="text-[9px] text-amber-600 font-black uppercase tracking-[0.25em]">{product.brand}</span>
-          <span className="text-[9px] text-slate-350 font-mono tracking-widest">{product.sku}</span>
+          <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{product.category}</span>
         </div>
         
         <h3 className="text-sm font-bold text-slate-800 leading-tight mb-5 group-hover:text-amber-600 transition-colors uppercase line-clamp-2 min-h-10">
