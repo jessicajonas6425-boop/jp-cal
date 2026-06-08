@@ -1,0 +1,113 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Premium footwear products in stock",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "sku": { "type": "string" },
+        "category": { "type": "string" },
+        "subcategory": { "type": "string" },
+        "brand": { "type": "string" },
+        "price": { "type": "number" },
+        "wholesalePrice": { "type": "number" },
+        "promotionalPrice": { "type": "number" },
+        "stock": { "type": "number" },
+        "weight": { "type": "number" },
+        "sizes": { "type": "array" },
+        "images": { "type": "array" },
+        "createdAt": { "type": "number" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["id", "name", "sku", "price", "wholesalePrice", "stock", "sizes", "images", "createdAt", "active"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Footwear categories and hierarchies",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "active": { "type": "boolean" },
+        "order": { "type": "number" },
+        "subcategories": { "type": "array" }
+      },
+      "required": ["id", "name", "active", "order"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Completed quotes or sales and shipment status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customer": { "type": "object" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "shippingCost": { "type": "number" },
+        "total": { "type": "number" },
+        "status": { "type": "string", "enum": ["Pendente", "Aprovado", "Enviado", "Entregue", "Cancelado"] },
+        "createdAt": { "type": "number" },
+        "mode": { "type": "string", "enum": ["Varejo", "Atacado"] },
+        "totalItems": { "type": "number" },
+        "savedAmount": { "type": "number" }
+      },
+      "required": ["id", "customer", "items", "subtotal", "shippingCost", "total", "status", "createdAt"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "General settings of the distributor",
+      "type": "object",
+      "properties": {
+        "storeName": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "instagram": { "type": "string" },
+        "facebook": { "type": "string" },
+        "tiktok": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "businessHours": { "type": "string" },
+        "wholesaleMinQty": { "type": "number" }
+      },
+      "required": ["storeName", "whatsapp", "wholesaleMinQty"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Discount coupons for dynamic subtractions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["porcentagem", "valor"] },
+        "value": { "type": "number" },
+        "minOrderValue": { "type": "number" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "type", "value", "active", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Footwear catalog details"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Hierarchy and tags for filtering"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Saves all quotes requested by clients"
+    },
+    "/settings/{settingsId}": {
+      "schema": "Settings",
+      "description": "Storewide configuration parameters"
+    },
+    "/coupons/{couponId}": {
+      "schema": "Coupon",
+      "description": "Store discount coupons used during checkout"
+    }
+  }
+}

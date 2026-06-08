@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Global Safety Net - default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper to validate identifier characters & length
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // 2. Products collection rules
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if true; // In retail storefronts, allow write for basic item additions/removals
+    }
+
+    // 3. Categories collection rules
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // 4. Orders collection rules
+    match /orders/{orderId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // 5. Settings collection rules
+    match /settings/{settingsId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // 6. Coupons collection rules
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}
