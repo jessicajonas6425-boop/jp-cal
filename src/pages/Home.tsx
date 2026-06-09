@@ -123,16 +123,18 @@ export default function Home() {
       
       {/* Premium Luxury Hero Banner */}
       <section className="relative h-[72vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-slate-950">
-        <div className="absolute inset-0 opacity-30 mix-blend-multiply animate-fadeIn">
+        <div className="absolute inset-0 opacity-65 animate-fadeIn">
           <img 
+            key={settings.heroBgUrl || 'default'}
             src={settings.heroBgUrl || "https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=2000&q=80"} 
             alt="Cinematic footwear construction" 
+            referrerPolicy="no-referrer"
             className="w-full h-full object-cover scale-102 transition-all duration-700"
           />
         </div>
         
-        {/* Glowing atmospheric layers */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/50" />
+        {/* Glowing atmospheric layers with dark gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-slate-950/85 to-slate-950" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-50/50 to-transparent" />
 

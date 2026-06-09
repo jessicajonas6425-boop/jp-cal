@@ -7,10 +7,15 @@ export default function Settings() {
   const { settings, updateSettings } = useStore();
   const [formData, setFormData] = useState(settings);
   const [showToast, setShowToast] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     setFormData(settings);
   }, [settings]);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [formData.heroBgUrl]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,17 +121,25 @@ export default function Settings() {
             {/* Live Preview Card */}
             <div className="border border-slate-200 rounded-xl p-4 bg-slate-50 space-y-2">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pré-visualização do Hero</span>
-              <div className="relative h-44 rounded-lg overflow-hidden bg-slate-900 flex items-center justify-center p-4">
-                <div className="absolute inset-0 opacity-20">
-                  <img 
-                    src={formData.heroBgUrl || 'https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=800&q=85'} 
-                    alt="Preview" 
-                    className="w-full h-full object-cover"
-                    onError={e => { (e.target as HTMLElement).style.display = 'none'; }}
-                  />
+              <div className="relative h-44 rounded-lg overflow-hidden bg-slate-950 flex items-center justify-center p-4">
+                <div className="absolute inset-0 opacity-60">
+                  {!imageError ? (
+                    <img 
+                      key={formData.heroBgUrl || 'default'}
+                      src={formData.heroBgUrl || 'https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=800&q=85'} 
+                      alt="Preview" 
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover"
+                      onError={() => setImageError(true)}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-slate-900 flex items-center justify-center text-slate-500 font-mono text-[10px]">
+                      Falha ao carregar imagem externa
+                    </div>
+                  )}
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/50 to-transparent" />
-                <div className="relative text-center max-w-md space-y-1">
+                <div className="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-slate-950/80 to-slate-950" />
+                <div className="relative z-10 text-center max-w-md space-y-1">
                   <h3 className="text-white text-xs font-black uppercase tracking-tight leading-tight whitespace-pre-line">
                     {formData.heroTitle || 'Passo Forte no\nAtacado de Calçados.'}
                   </h3>

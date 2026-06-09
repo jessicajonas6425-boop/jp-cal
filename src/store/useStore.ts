@@ -407,7 +407,9 @@ export const useStore = create<StoreState>((set, get) => ({
 
   updateSettings: async (s) => {
     try {
-      await setDoc(doc(db, 'settings', 'general'), cleanFirestoreData({ ...get().settings, ...s }));
+      const updated = { ...get().settings, ...s };
+      set({ settings: updated });
+      await setDoc(doc(db, 'settings', 'general'), cleanFirestoreData(updated));
     } catch (err) {
       handleFirestoreError(err, OperationType.UPDATE, 'settings/general');
     }
