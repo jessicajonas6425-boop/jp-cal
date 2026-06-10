@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
+  "name": "JP Sneakers",
+  "description": "Vitrine moderna de calçados JP com faturamento varejo/atacado, painel administrativo, PDV e checkout direto pelo WhatsApp.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

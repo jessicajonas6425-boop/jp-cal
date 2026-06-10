@@ -9,9 +9,13 @@ export default function Products() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<Product>>({});
+  const [sizesInput, setSizesInput] = useState('');
+  const [colorsInput, setColorsInput] = useState('');
 
   const handleEdit = (p: Product) => {
     setFormData(p);
+    setSizesInput(p.sizes?.join(', ') || '');
+    setColorsInput(p.colors?.join(', ') || '');
     setEditingId(p.id);
     setIsFormOpen(true);
   };
@@ -40,6 +44,8 @@ export default function Products() {
       images: [''],
       active: true
     });
+    setSizesInput('34, 35, 36, 37, 38, 39, 40, 41, 42');
+    setColorsInput('');
     setEditingId(null);
     setIsFormOpen(true);
   };
@@ -59,6 +65,17 @@ export default function Products() {
 
     const defaultSku = formData.sku || 'REF-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
+    // Split and sanitize sizes and colors separated by commas
+    const parsedSizes = sizesInput
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const parsedColors = colorsInput
+      .split(',')
+      .map(c => c.trim())
+      .filter(Boolean);
+
     // Ensure all numeric and boolean fields are clean and valid
     const submissionData = {
       ...formData,
@@ -72,7 +89,8 @@ export default function Products() {
       category: formData.category || categories[0]?.name || '',
       subcategory: formData.subcategory || '',
       description: formData.description || '',
-      colors: formData.colors || [],
+      sizes: parsedSizes,
+      colors: parsedColors,
       active: formData.active !== false
     };
 
@@ -333,8 +351,8 @@ export default function Products() {
                  <input 
                   required 
                   type="text" 
-                  value={formData.sizes?.join(', ') || ''} 
-                  onChange={e => setFormData({...formData, sizes: e.target.value.split(',').map(s=>s.trim()).filter(Boolean)})} 
+                  value={sizesInput} 
+                  onChange={e => setSizesInput(e.target.value)} 
                   placeholder="34, 35, 36, 37, 38, 39, 40, 41, 42"
                   className="w-full bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white text-sm p-3.5 rounded-xl outline-none transition-all font-bold" 
                 />
@@ -345,8 +363,8 @@ export default function Products() {
                  <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Cores Disponíveis (separadas por vírgula - opcional)</label>
                  <input 
                   type="text" 
-                  value={formData.colors?.join(', ') || ''} 
-                  onChange={e => setFormData({...formData, colors: e.target.value.split(',').map(c=>c.trim()).filter(Boolean)})} 
+                  value={colorsInput} 
+                  onChange={e => setColorsInput(e.target.value)} 
                   placeholder="Preto, Branco, Vermelho, Azul, Cinza, Rosa"
                   className="w-full bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white text-sm p-3.5 rounded-xl outline-none transition-all font-bold" 
                 />
