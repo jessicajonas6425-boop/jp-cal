@@ -164,7 +164,11 @@ export const useStore = create<StoreState>((set, get) => ({
   cart: [],
   addToCart: (item) => {
     set((state) => {
-      const existingItemIndex = state.cart.findIndex(i => i.id === item.id && i.selectedSize === item.selectedSize);
+      const existingItemIndex = state.cart.findIndex(i => 
+        i.id === item.id && 
+        i.selectedSize === item.selectedSize && 
+        (item.selectedColor ? i.selectedColor === item.selectedColor : true)
+      );
       if (existingItemIndex >= 0) {
         const newCart = [...state.cart];
         newCart[existingItemIndex].quantity += item.quantity;

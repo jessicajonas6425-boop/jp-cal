@@ -132,7 +132,9 @@ export default function Orders() {
                                     <img src={item.images[0]} alt="" className="w-12 h-12 object-cover rounded border border-slate-200 shrink-0" />
                                     <div className="min-w-0">
                                       <p className="font-extrabold text-xs text-slate-800 truncate uppercase">{item.name}</p>
-                                      <p className="text-[10px] text-slate-450 font-bold mt-1">TAM: {item.selectedSize} | QUANT: {item.quantity} pares</p>
+                                      <p className="text-[10px] text-slate-450 font-bold mt-1">
+                                        TAM: {item.selectedSize}{item.selectedColor ? ` | COR: ${item.selectedColor}` : ''} | QUANT: {item.quantity} pares
+                                      </p>
                                       <p className="text-xs font-extrabold text-slate-800 mt-1">
                                         Sub: {formatCurrency(appliedPrice * item.quantity)} <span className="text-[10px] text-slate-400 font-normal">({formatCurrency(appliedPrice)} un)</span>
                                       </p>

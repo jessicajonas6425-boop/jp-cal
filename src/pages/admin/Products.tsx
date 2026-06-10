@@ -36,6 +36,7 @@ export default function Products() {
       stock: 10, 
       weight: 0.8, 
       sizes: ['34', '35', '36', '37', '38', '39', '40', '41', '42'], 
+      colors: [],
       images: [''],
       active: true
     });
@@ -71,6 +72,7 @@ export default function Products() {
       category: formData.category || categories[0]?.name || '',
       subcategory: formData.subcategory || '',
       description: formData.description || '',
+      colors: formData.colors || [],
       active: formData.active !== false
     };
 
@@ -338,6 +340,18 @@ export default function Products() {
                 />
               </div>
 
+              {/* Colors list separated by commas */}
+              <div className="md:col-span-2">
+                 <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Cores Disponíveis (separadas por vírgula - opcional)</label>
+                 <input 
+                  type="text" 
+                  value={formData.colors?.join(', ') || ''} 
+                  onChange={e => setFormData({...formData, colors: e.target.value.split(',').map(c=>c.trim()).filter(Boolean)})} 
+                  placeholder="Preto, Branco, Vermelho, Azul, Cinza, Rosa"
+                  className="w-full bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white text-sm p-3.5 rounded-xl outline-none transition-all font-bold" 
+                />
+              </div>
+
               {/* Is Active selection */}
               <div className="md:col-span-2 flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                  <input 
@@ -401,6 +415,11 @@ export default function Products() {
                         <div className="text-[10px] font-bold text-slate-500 mt-0.5 uppercase tracking-wide">
                           Categoria: <span className="text-slate-400">{p.category}</span> {p.subcategory && `> ${p.subcategory}`}
                         </div>
+                        {p.colors && p.colors.length > 0 && (
+                          <div className="text-[10px] font-bold text-indigo-500 mt-0.5 uppercase tracking-wide">
+                            Cores: <span className="text-slate-400">{p.colors.join(', ')}</span>
+                          </div>
+                        )}
                       </td>
                       <td className="p-4 font-extrabold text-slate-800">
                         {p.promotionalPrice ? (

@@ -192,7 +192,12 @@ export default function Cart() {
                         <h3 className="font-bold text-slate-850 uppercase text-sm leading-snug line-clamp-2">
                           {item.name}
                         </h3>
-                        <p className="text-slate-500 text-xs mt-1 font-semibold">Tamanho: <span className="text-slate-950 font-black">{item.selectedSize}</span></p>
+                        <p className="text-slate-500 text-xs mt-1 font-semibold flex flex-wrap gap-x-3 gap-y-1">
+                          <span>Tamanho: <span className="text-slate-950 font-black">{item.selectedSize}</span></span>
+                          {item.selectedColor && (
+                            <span>Cor: <span className="text-indigo-600 font-bold">{item.selectedColor}</span></span>
+                          )}
+                        </p>
                         
                         {/* Mobile pricing spec only */}
                         <div className="md:hidden mt-2.5 flex items-center gap-1.5 text-xs">

@@ -12,6 +12,7 @@ export interface Product {
   stock: number;
   weight: number;
   sizes: string[];
+  colors?: string[];
   images: string[];
   createdAt: number;
   active: boolean;
@@ -28,6 +29,7 @@ export interface Category {
 export interface CartItem extends Product {
   cartItemId: string;
   selectedSize: string;
+  selectedColor?: string;
   quantity: number;
 }
 

@@ -264,7 +264,7 @@ export default function Checkout() {
 ${cart.map(item => {
   const priceUsed = isWholesale ? item.wholesalePrice : (item.promotionalPrice || item.price);
   return `• ${item.name}
-  - Tam: ${item.selectedSize} | Qtd: ${item.quantity} un
+  - Tam: ${item.selectedSize}${item.selectedColor ? ` | Cor: ${item.selectedColor}` : ''} | Qtd: ${item.quantity} un
   - Preço Unit: ${formatCurrency(priceUsed)}
   - Subtotal: ${formatCurrency(priceUsed * item.quantity)}
 `;
@@ -550,7 +550,7 @@ ${appliedCoupon ? `• Cupom Desconto (${appliedCoupon.id}): -${formatCurrency(d
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-slate-200 leading-tight uppercase truncate">{item.name}</p>
-                      <p className="text-slate-450 text-[10px] mt-0.5 font-semibold">Tamanho: {item.selectedSize} | Qtd: {item.quantity}</p>
+                      <p className="text-slate-450 text-[10px] mt-0.5 font-semibold">Tamanho: {item.selectedSize}{item.selectedColor ? ` | Cor: ${item.selectedColor}` : ''} | Qtd: {item.quantity}</p>
                       <p className="font-extrabold text-teal-400 mt-1">{formatCurrency(itemPrice * item.quantity)}</p>
                     </div>
                   </div>

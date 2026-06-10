@@ -13,10 +13,12 @@ export default function Product() {
   const product = products.find(p => p.id === id);
   
   const [selectedSize, setSelectedSize] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [added, setAdded] = useState(false);
   const [sizeError, setSizeError] = useState(false);
+  const [colorError, setColorError] = useState(false);
 
   if (!product) {
     return (
@@ -38,10 +40,16 @@ export default function Product() {
       setSizeError(true);
       return;
     }
+
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
+      setColorError(true);
+      return;
+    }
     
     addToCart({
       ...product,
       selectedSize,
+      selectedColor: selectedColor || undefined,
       quantity
     });
     
@@ -225,6 +233,48 @@ export default function Product() {
               ))}
             </div>
           </div>
+
+          {/* Color picker panel */}
+          {product.colors && product.colors.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center pl-0.5">
+                <span className="font-black text-[10px] uppercase tracking-[0.25em] text-slate-450">Selecionar Cor</span>
+                <span className="text-[10px] text-amber-600 font-black uppercase tracking-wider bg-amber-50 border border-amber-100/50 px-2.5 py-1 rounded-lg">Cores JP</span>
+              </div>
+              
+              <AnimatePresence>
+                {colorError && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-xs font-black text-rose-500 pl-0.5"
+                  >
+                    ⚠️ Por favor, selecione primeiro a cor do calçado.
+                  </motion.p>
+                )}
+              </AnimatePresence>
+              
+              <div className="flex flex-wrap gap-2">
+                {product.colors.map(color => (
+                  <button
+                    key={color}
+                    onClick={() => {
+                      setSelectedColor(color);
+                      setColorError(false);
+                    }}
+                    className={`px-5 py-3 text-center border-2 font-black rounded-2xl text-xs transition-all duration-300 cursor-pointer ${
+                      selectedColor === color 
+                        ? 'border-amber-500 bg-slate-950 text-amber-400 shadow-md scale-102' 
+                        : 'border-slate-200 text-slate-800 hover:border-slate-950 bg-white hover:bg-slate-50'
+                    }`}
+                  >
+                    {color}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Quantity selector & Add to cart */}
           <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">

@@ -21,11 +21,12 @@ export default function PDV() {
 
   const handleAddToCart = (product: Product) => {
     if (product.stock <= 0) return alert('Sem estoque!');
-    const existing = cart.find(i => i.id === product.id && i.selectedSize === product.sizes[0]);
+    const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0] : undefined;
+    const existing = cart.find(i => i.id === product.id && i.selectedSize === product.sizes[0] && i.selectedColor === defaultColor);
     if (existing) {
       setCart(cart.map(i => i.cartItemId === existing.cartItemId ? { ...i, quantity: i.quantity + 1 } : i));
     } else {
-      setCart([...cart, { ...product, cartItemId: Math.random().toString(), selectedSize: product.sizes[0], quantity: 1}]);
+      setCart([...cart, { ...product, cartItemId: Math.random().toString(), selectedSize: product.sizes[0], selectedColor: defaultColor, quantity: 1}]);
     }
     setSearchTerm('');
   };
@@ -184,7 +185,7 @@ export default function PDV() {
               </div>
               {lastOrder.items.map(item => (
                 <div key={item.cartItemId} className="flex justify-between">
-                  <span className="truncate w-48">{item.quantity}x {item.name} ({item.selectedSize})</span>
+                  <span className="truncate w-48">{item.quantity}x {item.name} ({item.selectedSize}{item.selectedColor ? `, Cor: ${item.selectedColor}` : ''})</span>
                   <span>{formatCurrency((item.promotionalPrice || item.price) * item.quantity)}</span>
                 </div>
               ))}
